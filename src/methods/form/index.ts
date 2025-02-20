@@ -6,15 +6,19 @@ export function isUrl(url=''){
     return !! url.match(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_+.~#?&/=]*)/)
 }
 export function validateInp(inp:any):void{
-    console.log('input',inp)
     if(!inp)return
     const val:string = inp.value || ''
     const isEmpty:boolean = val === '' || val === null
     let parent = inp.parentNode
+    if((inp.classList.contains('optional')) || inp.classList.contains('ant-select-selection-search-input')) {
+        inp.classList.add('input-valid')
+        inp.classList.remove('input-invalid')
+        return;
+    }
     let ignore = false
     while (parent && parent.nodeName !== 'form' && parent !==document.body){
         const className:string = [...parent.classList].join(' ')
-        if(className.includes('ant-') || className.includes('quill')){
+        if((className.includes('ant-') && className.includes('-input')) || className.includes('quill')){
             ignore =true
             break
         }
@@ -25,7 +29,6 @@ export function validateInp(inp:any):void{
         inp.classList.remove('input-invalid')
         return;
     }
-    if((!inp && inp.classList.contains('optional')) || inp.classList.contains('ant-select-selection-search-input')) return;
     if (!val){
         inp.classList.add('input-invalid')
         inp.classList.remove('input-valid')
