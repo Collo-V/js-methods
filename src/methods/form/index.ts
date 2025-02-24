@@ -34,6 +34,17 @@ export function validateInp(inp:any):void{
         inp.classList.remove('input-valid')
         return;
     }
+    if(inp.classList.includes('two-words')){
+        const completeName = val.split(' ')
+            .filter(part=>part &&part.length >=2 )[0]
+        if(!completeName){
+            inp.classList.add('input-invalid')
+            inp.classList.remove('input-invalid')
+            return;
+        }
+
+    }
+
     if(inp.id==='firstName'){
         if(isEmpty || val.length<2){
             inp.classList.add('input-invalid')
