@@ -1,5 +1,5 @@
 import {AnyObject} from "@/types";
-import {insertKey} from "@/methods/objects/plain-objects/insertKey";
+import {insertKey} from "./plain-objects/insertKey";
 
 export function sortData(data:AnyObject| AnyObject[],sortField:string,direction='asc'){
     let isObject

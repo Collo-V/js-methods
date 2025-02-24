@@ -34,8 +34,17 @@ export function validateInp(inp:any):void{
         inp.classList.remove('input-valid')
         return;
     }
-    if(inp.classList.includes('two-words')){
-        const completeName = val.split(' ')
+    if(inp.classList.contains('two-words')){
+        console.log('Two words here')
+        const words = val.split(' ').filter(word=>word)
+        console.log(words)
+        if(words.length <2){
+            inp.classList.add('input-invalid')
+            inp.classList.remove('input-valid')
+            return;
+        }
+        console.log('Input is valid')
+        const completeName = words
             .filter(part=>part &&part.length >=2 )[0]
         if(!completeName){
             inp.classList.add('input-invalid')
