@@ -1,3 +1,5 @@
+import {isLetter} from "./stringValidation";
+
 export function priceFormatter(price: number|string): string {
     if(!price)return ''
     price = parseFloat(price.toString())
@@ -18,4 +20,21 @@ export function priceFormatter(price: number|string): string {
 export function capitalizeString(str:string): string {
     if(!str)return str
     return str.split(' ').filter(p=>p).map(part=>part.replace(part[0],part[0].toUpperCase())).join(' ')
+}
+export const formatPascalString = (string:string) => {
+    let temp = ''
+    for (let i = 0; i < string.length; i++) {
+        let character = string.charAt(i);
+        if(isLetter(character) && character === character.toUpperCase()) {
+            temp += ` ${character}`;
+        }
+        else {
+            temp+=character
+        }
+    }
+    return temp
+}
+export const makeStringReadable = (string:string) => {
+    string = string.replace(/([-_])/g,'')
+    return formatPascalString(string)
 }
