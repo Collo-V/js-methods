@@ -175,6 +175,16 @@ export async function blobToBase64(blob:Blob):Promise<unknown>{
         reader.readAsDataURL(blob);
     });
 }
+export const getImageSize = (base64:string):Promise<[number,number]>=>{
+    return new Promise((resolve)=>{
+        const image = new Image()
+        image.onload = ()=>{
+            resolve([image.naturalWidth,image.naturalHeight])
+        }
+        image.src = base64
+
+    })
+}
 
 
 
