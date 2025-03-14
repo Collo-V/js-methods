@@ -186,7 +186,7 @@ export const getImageSize = (base64:string):Promise<[number,number]>=>{
     })
 }
 
-const selectFiles = (acceptedImageFormats:string[]) => {
+export const selectFiles = (acceptedImageFormats:string[]) => {
     return new Promise((resolve)=>{
         const input=document.createElement("input");
         input.type="file";
