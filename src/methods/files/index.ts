@@ -186,5 +186,27 @@ export const getImageSize = (base64:string):Promise<[number,number]>=>{
     })
 }
 
+const selectFiles = (acceptedImageFormats:string[]) => {
+    return new Promise((resolve)=>{
+        const input=document.createElement("input");
+        input.type="file";
+        input.setAttribute('multiple',true.toString())
+        if(acceptedImageFormats.length>0){
+            input.accept = acceptedImageFormats.join(',')
+        }
+        let files:File[]=[]
+        input.onchange = e=>{
+            if(!e)return
+            const target = e.target as HTMLInputElement
+            if(!target)return
+            const tempFiles = target.files||[]
+            files = [...tempFiles]
+            resolve(files)
+        }
+        input.click()
+    })
+
+}
+
 
 
