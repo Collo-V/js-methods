@@ -15,6 +15,32 @@ const packageJson = require('./package.json');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
+const plugins = [
+
+      alias({
+        entries:[
+          { find: '@', replacement: path.resolve(__dirname, './src') },
+        ]
+      }),
+      peerDepsExternal(),
+      json(),
+      resolve({
+        extensions
+      }),
+      commonjs(),
+      typescript({
+        check:false,
+        tsconfig:'./rollup.tsconfig.json',
+      }),
+      babel({
+        exclude: 'node_modules/**',
+        babelHelpers: 'bundled',
+        extensions
+      }),
+      del({ targets: 'dist/*' }),
+      terser()
+    ]
+const external = ['react','react-dom','next','react-icons','antd']
 export default {
   input: 'src/entry.ts',
   output: [
@@ -31,30 +57,40 @@ export default {
       sourcemap: true,
     },
   ],
-  plugins: [
-
-    alias({
-      entries:[
-        { find: '@', replacement: path.resolve(__dirname, './src') },
-      ]
-    }),
-    peerDepsExternal(),
-    json(),
-    resolve({
-      extensions
-    }),
-    commonjs(),
-    typescript({
-      check:false,
-      tsconfig:'./rollup.tsconfig.json',
-    }),
-    babel({
-      exclude: 'node_modules/**',
-      babelHelpers: 'bundled',
-      extensions
-    }),
-    del({ targets: 'dist/*' }),
-    terser()
-  ],
-  external:['react','react-dom','next','react-icons','antd'],
+  plugins,
+  external,
 }
+const config = [
+  {
+    input: 'src/entry.ts',
+    output: [
+      // {
+      //   file: packageJson.main,
+      //   format: 'cjs',
+      //   sourcemap: true,
+      //
+      // },
+      {
+        file: packageJson.module,
+        format: 'esm',
+        inlineDynamicImports:true,
+        sourcemap: true,
+      },
+    ],
+    plugins,
+    external,
+  },
+  {
+    input: 'src/csrEntry.ts',
+    output: [
+      {
+        file: packageJson.csr,
+        format: 'esm',
+        inlineDynamicImports:true,
+        sourcemap: true,
+      },
+    ],
+    plugins,
+    external,
+  }
+]
