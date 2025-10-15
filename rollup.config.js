@@ -60,37 +60,3 @@ export default {
   plugins,
   external,
 }
-const config = [
-  {
-    input: 'src/entry.ts',
-    output: [
-      // {
-      //   file: packageJson.main,
-      //   format: 'cjs',
-      //   sourcemap: true,
-      //
-      // },
-      {
-        file: packageJson.module,
-        format: 'esm',
-        inlineDynamicImports:true,
-        sourcemap: true,
-      },
-    ],
-    plugins,
-    external,
-  },
-  {
-    input: 'src/csrEntry.ts',
-    output: [
-      {
-        file: packageJson.csr,
-        format: 'esm',
-        inlineDynamicImports:true,
-        sourcemap: true,
-      },
-    ],
-    plugins,
-    external,
-  }
-]
