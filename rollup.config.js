@@ -4,7 +4,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
 import babel from '@rollup/plugin-babel';
 import typescript from 'rollup-plugin-typescript2'
-// import dts from 'rollup-plugin-dts'
+import dts from 'rollup-plugin-dts'
 import { createRequire } from 'node:module'
 import json from '@rollup/plugin-json'
 import alias from '@rollup/plugin-alias';
@@ -39,7 +39,6 @@ const plugins = [
   babel({
     presets: [
       '@babel/preset-env',
-      '@babel/preset-react',
       '@babel/preset-typescript' // <-- Highly recommended if Babel handles TS files
     ],
     exclude: 'node_modules/**',
@@ -65,14 +64,14 @@ export default [
   plugins,
   external,
 },
-// {
-//   input: 'src/entry.ts',
-//   output: [{ file: 'dist/entry.d.ts', format: 'esm' }], // Drops entry.d.ts right in dist/
-//   plugins: [
-//     alias({
-//       entries: [{ find: '@', replacement: path.resolve(__dirname, './src') }],
-//     }),
-//     dts(), // Bundles all declarations cleanly into one file
-//   ],
-// }
+{
+  input: 'src/entry.ts',
+  output: [{ file: 'dist/entry.d.ts', format: 'esm' }], // Drops entry.d.ts right in dist/
+  plugins: [
+    alias({
+      entries: [{ find: '@', replacement: path.resolve(__dirname, './src') }],
+    }),
+    dts(), // Bundles all declarations cleanly into one file
+  ],
+}
 ]
