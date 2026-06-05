@@ -1,6 +1,12 @@
+//@ts-expect-error ignore sweetalert2 types
 import Swal from "sweetalert2";
 import {ConfirmActionWithInputProps, MessageProps} from "@/types";
 
+/** Show a confirmation dialog for a specific action
+ *
+ * @param action
+ * @returns {Promise<boolean>} Returns true if the user confirms, false otherwise
+ */
 export async function confirmAction(action:string) {
     action = action??'delete'
     let c = await Swal.fire({
@@ -19,6 +25,11 @@ export async function confirmAction(action:string) {
     }
 
 }
+/** Show a confirmation dialog with an input field for a specific action
+ *
+ * @param params
+ * @returns {Promise<boolean>} Returns true if the user confirms, false otherwise
+ */
 export async function confirmActionWithInput(params:ConfirmActionWithInputProps) {
     const {title,label,placeholder,input,warning,confirmButtonText} = params
     let html = `${label??''}`
@@ -30,7 +41,7 @@ export async function confirmActionWithInput(params:ConfirmActionWithInputProps)
         input: 'text',
         html,
         confirmButtonText:confirmButtonText??'Yes',
-        inputValidator: (value) => {
+        inputValidator: (value?:string) => {
             if (!value) {
                 return "You need to write something!";
             }

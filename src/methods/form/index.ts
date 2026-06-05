@@ -146,10 +146,10 @@ export function formIsValid (ref:string|HTMLFormElement):boolean{
         formRef = document.getElementById(ref)
     }else formRef = ref
     if(formRef){
-        const inps:HTMLCollection = formRef.getElementsByTagName('input')
-        const txt:HTMLCollection = formRef.getElementsByTagName('textarea')
-        const inputDivs:HTMLCollection = formRef.getElementsByClassName('input-div')
-        const inputElements:any[] = [...inps,...txt,...inputDivs]
+        const inps:Element[] = formRef.getElementsByTagName('input') as unknown as Element[]
+        const txt:Element[] = formRef.getElementsByTagName('textarea') as unknown as Element[]
+        const inputDivs:Element[] = formRef.getElementsByClassName('input-div') as unknown as Element[]
+        const inputElements:HTMLElement[] = [...inps,...txt,...inputDivs] as unknown as HTMLElement[]
         for (let i = 0; i < inputElements.length; i++) {
             const inp = inputElements[i]
             validateInp(inp)

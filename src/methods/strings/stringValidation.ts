@@ -1,4 +1,3 @@
 export function isLetter(str:string):boolean {
-    str = str.toLowerCase();
-    return !!(str.length === 1 && str.match(/[a-z]/i))
-}
+    return typeof str === 'string' && str.length === 1 && /^[a-z]$/i.test(str);
+} 

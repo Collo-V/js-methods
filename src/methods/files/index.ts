@@ -200,7 +200,7 @@ export const selectFiles = (acceptedImageFormats:string[]) => {
             const target = e.target as HTMLInputElement
             if(!target)return
             const tempFiles = target.files||[]
-            files = [...tempFiles]
+            files = [...tempFiles as File[]]
             resolve(files)
         }
         input.click()

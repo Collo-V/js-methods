@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
+    "rootDir": "src",
     "target": "es5",
     "module": "esnext",
+    "moduleResolution": "node",
     "jsx": "react",
     "declaration": true,
     "declarationDir": "dist/types",
@@ -12,8 +14,9 @@
     "forceConsistentCasingInFileNames": true,
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "test","src/app"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test","src/app", "src/APP.tsx","src/index.tsx"]
 }
