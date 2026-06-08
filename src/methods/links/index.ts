@@ -35,4 +35,4 @@ export const decodeURLPath = (cleaned: string): string =>
         } catch {
             return _match;
         }
-    });
+    }).replace(/-/g, ' ');
