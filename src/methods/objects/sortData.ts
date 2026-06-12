@@ -1,38 +1,40 @@
 import {AnyObject} from "@/types";
-import {insertKey} from "./plain-objects/insertKey";
 
-export function sortData(data:AnyObject| AnyObject[],sortField:string,direction='asc'){
-    let isObject
-    if(!data.slice){
-        isObject = true
-        data = Object.values(insertKey(data,'sortCustomKey'))
-    }
-    const tempData = [...data as AnyObject[]]
-    for (let i = 0; i < tempData.length; i++) {
-        const item = (tempData as AnyObject)[i]
-        let leftMost = item[sortField]
-        let index = i
-        for (let j = i+1; j < tempData.length-i ; j++) {
-            const changeLeftMost = (direction === 'asc' && tempData[j][sortField] < leftMost)
-                ||(direction === 'desc' && tempData[j][sortField] > leftMost)
-            if(changeLeftMost){
-                leftMost = tempData[j][sortField]
-                index = j
-            }
+export function sortData(
+    data: AnyObject | AnyObject[], 
+    sortField: string, 
+    direction: 'asc' | 'desc' = 'asc'
+): AnyObject | AnyObject[] {
+    
+    const isArray = Array.isArray(data);
+    
+    // 1. Normalize input into a standardized array of { key, value } pairs
+    // This avoids injecting dummy keys into the user's actual objects.
+    const normalizedArray = isArray
+        ? (data as AnyObject[]).map((item, index) => ({ key: index, value: { ...item } }))
+        : Object.entries(data as AnyObject).map(([key, value]) => ({ key, value: { ...value } }));
+
+    // 2. Perform the sort using built-in, highly optimized Timsort O(n log n)
+    normalizedArray.sort((a, b) => {
+        const valA = a.value[sortField];
+        const valB = b.value[sortField];
+
+        // Handle cases where the field might be missing
+        if (valA === undefined || valB === undefined) return 0;
+
+        if (valA < valB) return direction === 'asc' ? -1 : 1;
+        if (valA > valB) return direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    // 3. Reconstruct the original data format
+    if (isArray) {
+        return normalizedArray.map(item => item.value);
+    } else {
+        const sortedObject: AnyObject = {};
+        for (const item of normalizedArray) {
+            sortedObject[item.key] = item.value;
         }
-        tempData[i] = tempData[index]
-        tempData[index] = item
+        return sortedObject;
     }
-    data = tempData
-    if(isObject){
-        const tempObject:AnyObject = {}
-        tempData.forEach((item:any)=>{
-            const key:string =  item['sortCustomKey']
-            delete item['sortCustomKey']
-            tempObject[key] = item
-        })
-        data = tempObject
-    }
-    return data
-
 }
