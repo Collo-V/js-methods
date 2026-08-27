@@ -102,7 +102,14 @@ export async function confirmActionWithInput(params:ConfirmActionWithInputProps)
  * Shows a toast notification
  * @param MessageProps 
  */
-export async function message({icon,title}:MessageProps){
+export async function message(props:MessageProps){
+    const icon = props.icon??'info'
+    let title = props.title
+    if(!title){
+        if(icon==='success') title = 'Success'
+        else if(icon==='error') title = 'An error occurred'
+        else title = 'Info'
+    }
     const Toast = Swal.mixin({
         toast: true,
         timer:3000,
@@ -119,7 +126,7 @@ export async function message({icon,title}:MessageProps){
 
     await Toast.fire({
         icon,
-        title:title??icon==='success'?'Success':icon==='error'?'An error occurred':'Info',
+        title,
         iconColor: notificationConfig.colors?.[icon]
         
     })
