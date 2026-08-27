@@ -1,28 +1,25 @@
-import React, {FormEvent, useRef, useState} from 'react';
-import {formIsValid} from "./methods";
+import React, {FormEvent, useEffect, useRef, useState} from 'react';
+import {confirmAction, confirmActionWithInput, formIsValid, message} from "./methods";
+import { registerNotificationConfig } from './methods';
 
 function App() {
-    const [input, setInput] = useState('')
-    const formRef = useRef<HTMLFormElement>(null);
-    const submit = (e:FormEvent) => {
-        e.preventDefault()
-        console.log('Submitting.....')
-        if(!formRef.current)return
-        formIsValid(formRef.current)
+    useEffect(() => {
+        registerNotificationConfig({
+            colors:{
+                primary:'#0061C1',
+                success:'#0061C1',
+                neutral:'#F1F5F9',
+                // error:'#0F0',
+            }
+        })
+    },[])
+    const notify = async()=>{
+        message({icon:'error'})
     }
+    
     return (
         <div>
-            <form
-                onSubmit={submit}
-                  ref={formRef}
-            >
-                <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    className="two-words"
-                />
-            </form>
+            <button onClick={notify}>Test</button>
         </div>
     );
 }

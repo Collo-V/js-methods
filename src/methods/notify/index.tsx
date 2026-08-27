@@ -1,39 +1,59 @@
-//@ts-expect-error ignore sweetalert2 types
 import Swal from "sweetalert2";
-import {ConfirmActionProps, ConfirmActionWithInputProps, MessageProps, NotificationColors} from "@/types";
+import {ConfirmActionProps, ConfirmActionWithInputProps, MessageProps, NotificationColors, NotificationConfig} from "@/types";
+import { deleteObjectFields } from "../objects";
 
-const notificationColors: NotificationColors = {}
-
-export function registerNotificationColors(colors: NotificationColors) {
-    Object.assign(notificationColors, colors)
+const notificationConfig: NotificationConfig = {}
+/**
+ * Registers a notification configuration
+ * @param config NotificationConfig
+ * @returns void
+ */
+export function registerNotificationConfig(config: NotificationConfig) {
+    const colors: NotificationColors = config.colors ?? {}
+    const savedConfig = {
+        title:'Confirm Action',
+        text: 'Do you want to continue?',
+        confirmButtonText: 'Yes',
+        showCancelButton: true,
+        confirmButtonColor: colors.primary,
+        cancelButtonColor: colors.cancel,
+        ...config
+    }
+    Object.assign(notificationConfig, savedConfig)
+    localStorage.setItem('swalNotificationConfig', JSON.stringify(savedConfig))
 }
-
+const loadSavedConfig = () => {
+    if(notificationConfig.colors)return
+    const savedConfig = localStorage.getItem('swalNotificationConfig')
+    if (savedConfig) {
+        Object.assign(notificationConfig, JSON.parse(savedConfig))
+    }
+}
+loadSavedConfig()
+function injectConfigProps<T extends Record<string, unknown>>(props:T): T {
+    const config = deleteObjectFields(notificationConfig, ['colors'])
+    const result: Record<string, unknown> = {}
+    Object.keys({...config, ...props}).forEach((key) => {
+        if(props[key] === undefined){
+            result[key] = config[key as keyof NotificationConfig]
+        }
+        else result[key] = key.includes('Color') ? notificationConfig!.colors![props[key] as keyof NotificationColors] : props[key]
+    })
+    return result as T
+}
 /** Show a confirmation dialog for a specific action
  *
  * @param action
  * @returns {Promise<boolean>} Returns true if the user confirms, false otherwise
  */
 export async function confirmAction(action:ConfirmActionProps) {
-    const params = typeof action === 'string'
+    const params = injectConfigProps(typeof action === 'string'
         ? {
-            title: 'Confirm '+ (action || 'delete'),
-            text: 'Do you want to continue',
-            confirmButtonText: 'Yes',
-            showCancelButton: true
+            title: action??undefined,
         }
-        : action
+        : action)
 
-    let c = await Swal.fire({
-        title: params.title,
-        text: params.text ?? 'Do you want to continue',
-        icon: params.icon,
-        confirmButtonText: params.confirmButtonText ?? 'Yes',
-        confirmButtonColor: params.confirmButtonColor
-            ? notificationColors[params.confirmButtonColor]
-            : undefined,
-        showCancelButton: params.showCancelButton ?? true,
-        cancelButtonText:'cancel'
-    })
+    let c = await Swal.fire(params)
     if (c.isConfirmed){
         return true
     }
@@ -48,27 +68,27 @@ export async function confirmAction(action:ConfirmActionProps) {
  * @returns {Promise<boolean>} Returns true if the user confirms, false otherwise
  */
 export async function confirmActionWithInput(params:ConfirmActionWithInputProps) {
-    const {title,label,placeholder,input,warning,confirmButtonText} = params
+    const config = injectConfigProps(params)
+    delete config.placeholder
+    const {label,placeholder,input,warning} = config
     let html = `${label??''}`
     if(warning){
         html+=`<br><br><span style="color: #f33030">*${warning}</span>`
     }
     let c = await Swal.fire({
-        title,
+        ...config,
         input: 'text',
         html,
-        confirmButtonText:confirmButtonText??'Yes',
+        icon: config.icon,
         inputValidator: (value?:string) => {
             if (!value) {
-                return "You need to write something!";
+                return "Input is required";
             }
             if (value !== input) {
                 return "Invalid value";
             }
         },
-        showCancelButton:true,
         inputPlaceholder:placeholder??"",
-        cancelButtonText:'cancel'
     })
     if (c.isConfirmed){
         return true
@@ -78,7 +98,10 @@ export async function confirmActionWithInput(params:ConfirmActionWithInputProps)
     }
 
 }
-
+/**
+ * Shows a toast notification
+ * @param MessageProps 
+ */
 export async function message({icon,title}:MessageProps){
     const Toast = Swal.mixin({
         toast: true,
@@ -93,9 +116,12 @@ export async function message({icon,title}:MessageProps){
         }
     })
 
+
     await Toast.fire({
         icon,
-        title
+        title:title??icon==='success'?'Success':icon==='error'?'An error occurred':'Info',
+        iconColor: notificationConfig.colors?.[icon]
+        
     })
 }
 
