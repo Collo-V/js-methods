@@ -23,7 +23,7 @@ export function registerNotificationConfig(config: NotificationConfig) {
     localStorage.setItem('swalNotificationConfig', JSON.stringify(savedConfig))
 }
 const loadSavedConfig = () => {
-    if(notificationConfig.colors)return
+    if(typeof localStorage === 'undefined' || !notificationConfig.colors)return
     const savedConfig = localStorage.getItem('swalNotificationConfig')
     if (savedConfig) {
         Object.assign(notificationConfig, JSON.parse(savedConfig))
