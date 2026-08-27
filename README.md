@@ -8,6 +8,27 @@ A library for frequently used  util functions
 
 ## Usage
 
+### Notification colors
+
+Register the colors used by notification tokens in the consumer app. Each color is optional.
+
+```ts
+import {message, registerNotificationColors} from 'collov-js-methods'
+
+registerNotificationColors({
+	primary: '#2563eb',
+	secondary: '#64748b',
+	danger: '#dc2626',
+	neutral: '#525252'
+})
+
+await message({
+	title: 'Profile updated',
+	icon: 'success',
+	color: 'primary'
+})
+```
+
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.\

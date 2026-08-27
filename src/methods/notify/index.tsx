@@ -1,20 +1,37 @@
 //@ts-expect-error ignore sweetalert2 types
 import Swal from "sweetalert2";
-import {ConfirmActionWithInputProps, MessageProps} from "@/types";
+import {ConfirmActionProps, ConfirmActionWithInputProps, MessageProps, NotificationColors} from "@/types";
+
+const notificationColors: NotificationColors = {}
+
+export function registerNotificationColors(colors: NotificationColors) {
+    Object.assign(notificationColors, colors)
+}
 
 /** Show a confirmation dialog for a specific action
  *
  * @param action
  * @returns {Promise<boolean>} Returns true if the user confirms, false otherwise
  */
-export async function confirmAction(action:string) {
-    action = action??'delete'
+export async function confirmAction(action:ConfirmActionProps) {
+    const params = typeof action === 'string'
+        ? {
+            title: 'Confirm '+ (action || 'delete'),
+            text: 'Do you want to continue',
+            confirmButtonText: 'Yes',
+            showCancelButton: true
+        }
+        : action
+
     let c = await Swal.fire({
-        title: 'Confirm '+ action,
-        text: 'Do you want to continue',
-        // icon: 'error',
-        confirmButtonText: 'Yes',
-        showCancelButton:true,
+        title: params.title,
+        text: params.text ?? 'Do you want to continue',
+        icon: params.icon,
+        confirmButtonText: params.confirmButtonText ?? 'Yes',
+        confirmButtonColor: params.confirmButtonColor
+            ? notificationColors[params.confirmButtonColor]
+            : undefined,
+        showCancelButton: params.showCancelButton ?? true,
         cancelButtonText:'cancel'
     })
     if (c.isConfirmed){
