@@ -34,7 +34,8 @@ export const cleanObject = <T extends AnyObject>(object: T): T =>{
     //@ts-expect-error ignore
     Object.entries(object).forEach(([key, value]) => {
         if(value === undefined)return;
-        if(typeof value === "object"){
+        if(value === null)cleaned[key as keyof T] = value;
+        else if(typeof value === "object"){
             if (Array.isArray(value)) {
                 cleaned[key as keyof T] = value.map((item) => cleanObject(item)) as T[keyof T];
             }
